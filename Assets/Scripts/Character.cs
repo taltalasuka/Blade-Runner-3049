@@ -1,8 +1,5 @@
 using System.Collections;
 using UnityEngine;
-
-
-
 public class Character : MonoBehaviour
 {
     private PlayerInput _playerInput;
@@ -137,7 +134,6 @@ public class Character : MonoBehaviour
                         {
                             _playerInput.isMouseDown = false;
                             SwitchStateTo(CharacterState.Attacking);
-                            CalculateMovement();
                         }
                     }
                 }
@@ -145,11 +141,6 @@ public class Character : MonoBehaviour
             case CharacterState.Dead:
                 return;
             case CharacterState.BeingHit:
-                if (_impactOnCharacter.magnitude > 0.2f)
-                {
-                    _characterVelocity = _impactOnCharacter * Time.deltaTime;
-                }
-                _impactOnCharacter = Vector3.Lerp(_impactOnCharacter, Vector3.zero, Time.deltaTime * 5);
                 break;
             case CharacterState.Slide:
                 _characterVelocity = Time.deltaTime * _slideSpeed * transform.forward;
@@ -162,6 +153,11 @@ public class Character : MonoBehaviour
                 }
                 break;
         }
+        if (_impactOnCharacter.magnitude > 0.2f)
+        {
+            _characterVelocity = _impactOnCharacter * Time.deltaTime;
+        }
+        _impactOnCharacter = Vector3.Lerp(_impactOnCharacter, Vector3.zero, Time.deltaTime * 5);
 
         if (isPlayer)
         {
@@ -174,9 +170,17 @@ public class Character : MonoBehaviour
                 _characterVelocity += -20f * 0.3f * Time.deltaTime * Vector3.up;
             }
             _characterController.Move(_characterVelocity);
+            _characterVelocity = Vector3.zero;
+        }
+        else
+        {
+            if (currentState != CharacterState.Normal)
+            {
+                _characterController.Move(_characterVelocity);
+                _characterVelocity = Vector3.zero;
+            }
         }
     }
-
     public void SwitchStateTo(CharacterState newState)
     {
         if (isPlayer)
@@ -215,6 +219,7 @@ public class Character : MonoBehaviour
                 _characterAnimator.SetTrigger(Animator.StringToHash("Attack"));
                 if (isPlayer)
                 {
+                    RotateToCursor();
                     _attackStartTime = Time.time;
                 }
                 else
@@ -282,6 +287,10 @@ public class Character : MonoBehaviour
         {
             SwitchStateTo(CharacterState.BeingHit);
             AddImpact(attackPos, 10f);
+        }
+        else
+        {
+            AddImpact(attackPos, 2.5f);
         }
     }
 
@@ -399,5 +408,16 @@ public class Character : MonoBehaviour
         }
         _materialPropertyBlock.SetFloat(Shader.PropertyToID("_enableDissolve"),0f);
         _skinnedMeshRenderer.SetPropertyBlock(_materialPropertyBlock);
+    }
+
+    private void RotateToCursor()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hitResult;
+        if (Physics.Raycast(ray, out hitResult, 1000, 1 << LayerMask.NameToLayer("CursorTest")))
+        {
+            Vector3 cursorPos = hitResult.point;
+            transform.rotation = Quaternion.LookRotation(cursorPos - transform.position, Vector3.up);
+        }
     }
 }

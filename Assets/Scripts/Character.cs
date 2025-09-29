@@ -42,6 +42,8 @@ public class Character : MonoBehaviour
     private SkinnedMeshRenderer _skinnedMeshRenderer;
 
     [SerializeField] private GameObject itemToDrop;
+
+    private bool _isButtonClicked;
     void Awake()
     {
         _damageCaster = GetComponentInChildren<DamageCaster>();
@@ -79,10 +81,16 @@ public class Character : MonoBehaviour
         }
     }
 
+    public void TriggerAttack()
+    {
+        _isButtonClicked = true;
+    }
+
     void CalculateMovement()
     {
-        if (_playerInput.isMouseDown && _characterController.isGrounded)
+        if (_isButtonClicked && _characterController.isGrounded)
         {
+            _isButtonClicked = false;
             SwitchStateTo(CharacterState.Attacking);
             return;
         } 
@@ -219,7 +227,7 @@ public class Character : MonoBehaviour
                 _characterAnimator.SetTrigger(Animator.StringToHash("Attack"));
                 if (isPlayer)
                 {
-                    RotateToCursor();
+                    //RotateToCursor();
                     _attackStartTime = Time.time;
                 }
                 else

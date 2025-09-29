@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -6,6 +7,7 @@ public class PlayerInput : MonoBehaviour
     public float horizontalInput;
     public bool isMouseDown;
     public bool isSpaceDown;
+    public FixedJoystick fixedJoystick;
     void FixedUpdate()
     {
         if (!isMouseDown && Time.timeScale != 0)
@@ -17,8 +19,8 @@ public class PlayerInput : MonoBehaviour
         {
             isSpaceDown = Input.GetKeyDown(KeyCode.Space);
         }
-        verticalInput = Input.GetAxisRaw("Vertical");
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = fixedJoystick.Vertical;
+        horizontalInput = fixedJoystick.Horizontal;
     }
 
     private void OnDisable()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -16,6 +17,14 @@ public class GameUI_Manager : MonoBehaviour
     }
 
     private GameUIState _currentState;
+
+    public BackGroundMusic backGroundMusic;
+
+    private void Awake()
+    {
+        backGroundMusic = GameObject.FindGameObjectWithTag("BackGroundMusic").GetComponent<BackGroundMusic>();
+    }
+
     void Update()
     {
         healthSlider.value = gm.playerCharacter.GetComponent<Health>().GetCurrentHealthPercentage();
@@ -48,6 +57,7 @@ public class GameUI_Manager : MonoBehaviour
 
     public void TogglePauseUI()
     {
+        backGroundMusic.PlaySound(backGroundMusic.button);
         if (_currentState == GameUIState.GamePlay)
         {
             SwitchUIState(GameUIState.Pause);
@@ -59,11 +69,13 @@ public class GameUI_Manager : MonoBehaviour
 
     public void ButtonMenu()
     {
+        backGroundMusic.PlaySound(backGroundMusic.button);
         gm.ReturnToMenu();
     }
 
     public void ButtonRestart()
     {
+        backGroundMusic.PlaySound(backGroundMusic.button);
         Time.timeScale = 1;
         gm.Restart();
     }

@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+
 public class Character : MonoBehaviour
 {
     private PlayerInput _playerInput;
@@ -43,7 +45,12 @@ public class Character : MonoBehaviour
 
     [SerializeField] private GameObject itemToDrop;
 
-    private bool _isButtonClicked;
+    private bool _isAttackButtonClicked;
+    private bool _isDashButtonClicked;
+
+    public BackGroundMusic backGroundMusic;
+    public Image musicImage;
+    public Sprite[] MusicSprites;        //0: music      1: muted
     void Awake()
     {
         _damageCaster = GetComponentInChildren<DamageCaster>();
@@ -64,6 +71,9 @@ public class Character : MonoBehaviour
         {
             _playerInput = GetComponent<PlayerInput>();
         }
+
+        backGroundMusic = GameObject.FindGameObjectWithTag("BackGroundMusic").GetComponent<BackGroundMusic>();
+        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
     }
 
     void CalculateEnemyMovement()
@@ -83,19 +93,25 @@ public class Character : MonoBehaviour
 
     public void TriggerAttack()
     {
-        _isButtonClicked = true;
+        _isAttackButtonClicked = true;
+    }
+
+    public void TriggerDash()
+    {
+        _isDashButtonClicked = true;
     }
 
     void CalculateMovement()
     {
-        if (_isButtonClicked && _characterController.isGrounded)
+        if (_isAttackButtonClicked && _characterController.isGrounded)
         {
-            _isButtonClicked = false;
+            _isAttackButtonClicked = false;
             SwitchStateTo(CharacterState.Attacking);
             return;
         } 
-        if (_playerInput.isSpaceDown && _characterController.isGrounded)
+        if (_isDashButtonClicked && _characterController.isGrounded)
         {
+            _isDashButtonClicked = false;
             SwitchStateTo(CharacterState.Slide);
             return;
         }
@@ -228,6 +244,7 @@ public class Character : MonoBehaviour
                 if (isPlayer)
                 {
                     //RotateToCursor();
+                    backGroundMusic.PlaySound(backGroundMusic.playerAttack);
                     _attackStartTime = Time.time;
                 }
                 else
@@ -244,6 +261,7 @@ public class Character : MonoBehaviour
                 StartCoroutine(MaterialDissolve());
                 break;
             case CharacterState.BeingHit:
+                backGroundMusic.PlaySound(backGroundMusic.playerHit);
                 _characterAnimator.SetTrigger(Animator.StringToHash("BeingHit"));
                 if (isPlayer)
                 {
@@ -252,6 +270,7 @@ public class Character : MonoBehaviour
                 }
                 break;
             case CharacterState.Slide:
+                backGroundMusic.PlaySound(backGroundMusic.playerDodge);
                 _characterAnimator.SetTrigger(Animator.StringToHash("Slide"));
                 break;
             case CharacterState.Spawn:
@@ -366,6 +385,7 @@ public class Character : MonoBehaviour
 
     public void PickUpItem(PickUp item)
     {
+        backGroundMusic.PlaySound(backGroundMusic.heal);
         switch (item.type)
         {
             case PickUp.PickUpType.Coin:
@@ -418,14 +438,22 @@ public class Character : MonoBehaviour
         _skinnedMeshRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 
-    private void RotateToCursor()
+    public void MusicButton()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hitResult;
-        if (Physics.Raycast(ray, out hitResult, 1000, 1 << LayerMask.NameToLayer("CursorTest")))
-        {
-            Vector3 cursorPos = hitResult.point;
-            transform.rotation = Quaternion.LookRotation(cursorPos - transform.position, Vector3.up);
-        }
+        backGroundMusic.isMuted = !backGroundMusic.isMuted;
+        backGroundMusic.audioSource.mute = backGroundMusic.isMuted;
+        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
+        backGroundMusic.PlaySound(backGroundMusic.button);
     }
+
+    // private void RotateToCursor()
+    // {
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //     RaycastHit hitResult;
+    //     if (Physics.Raycast(ray, out hitResult, 1000, 1 << LayerMask.NameToLayer("CursorTest")))
+    //     {
+    //         Vector3 cursorPos = hitResult.point;
+    //         transform.rotation = Quaternion.LookRotation(cursorPos - transform.position, Vector3.up);
+    //     }
+    // }
 }

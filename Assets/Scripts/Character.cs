@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,8 +50,7 @@ public class Character : MonoBehaviour
     private bool _isDashButtonClicked;
 
     public BackGroundMusic backGroundMusic;
-    public Image musicImage;
-    public Sprite[] MusicSprites;        //0: music      1: muted
+
     void Awake()
     {
         _damageCaster = GetComponentInChildren<DamageCaster>();
@@ -73,7 +73,6 @@ public class Character : MonoBehaviour
         }
 
         backGroundMusic = GameObject.FindGameObjectWithTag("BackGroundMusic").GetComponent<BackGroundMusic>();
-        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
     }
 
     void CalculateEnemyMovement()
@@ -437,14 +436,7 @@ public class Character : MonoBehaviour
         _materialPropertyBlock.SetFloat(Shader.PropertyToID("_enableDissolve"),0f);
         _skinnedMeshRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
-
-    public void MusicButton()
-    {
-        backGroundMusic.isMuted = !backGroundMusic.isMuted;
-        backGroundMusic.audioSource.mute = backGroundMusic.isMuted;
-        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
-        backGroundMusic.PlaySound(backGroundMusic.button);
-    }
+    
 
     // private void RotateToCursor()
     // {

@@ -19,6 +19,14 @@ public class GameUI_Manager : MonoBehaviour
     private GameUIState _currentState;
 
     public BackGroundMusic backGroundMusic;
+    
+    public Image musicImage;
+    public Sprite[] MusicSprites;        //0: music      1: muted
+
+    private void Start()
+    {
+        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
+    }
 
     private void Awake()
     {
@@ -88,5 +96,13 @@ public class GameUI_Manager : MonoBehaviour
     public void ShowGameIsFinishedUI()
     {
         SwitchUIState(GameUIState.GameIsFinished);
+    }
+    
+    public void MusicButton()
+    {
+        backGroundMusic.isMuted = !backGroundMusic.isMuted;
+        backGroundMusic.audioSource.mute = backGroundMusic.isMuted;
+        musicImage.sprite = backGroundMusic.isMuted ? MusicSprites[1] : MusicSprites[0];
+        backGroundMusic.PlaySound(backGroundMusic.button);
     }
 }

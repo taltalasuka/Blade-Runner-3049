@@ -3094,8 +3094,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1988060207}
-        m_TargetAssemblyTypeName: Character, Assembly-CSharp
+      - m_Target: {fileID: 939749124092477947}
+        m_TargetAssemblyTypeName: GameUI_Manager, Assembly-CSharp
         m_MethodName: MusicButton
         m_Mode: 1
         m_Arguments:
@@ -4832,10 +4832,6 @@ MonoBehaviour:
   spawnDuration: 2
   itemToDrop: {fileID: 0}
   backGroundMusic: {fileID: 0}
-  musicImage: {fileID: 1152187460}
-  MusicSprites:
-  - {fileID: 21300000, guid: a95cd8f06c1e9cd4db718c98a3758582, type: 3}
-  - {fileID: 21300000, guid: d21425edc9585b742b3d595102079113, type: 3}
 --- !u!143 &1988060208
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7477,6 +7473,11 @@ MonoBehaviour:
   uiPause: {fileID: 939749124129694247}
   uiGameOver: {fileID: 939749123433097875}
   uiGameIsFinished: {fileID: 939749124283298100}
+  backGroundMusic: {fileID: 0}
+  musicImage: {fileID: 1152187460}
+  MusicSprites:
+  - {fileID: 21300000, guid: a95cd8f06c1e9cd4db718c98a3758582, type: 3}
+  - {fileID: 21300000, guid: d21425edc9585b742b3d595102079113, type: 3}
 --- !u!224 &939749124129694244
 RectTransform:
   m_ObjectHideFlags: 0
